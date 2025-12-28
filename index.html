@@ -125,9 +125,11 @@
     
     async function getTokenAndSave() {
       try {
-        const token = await messaging.getToken({
-          vapidKey: 'BJ5PR5eT1hyx47uNgz8EAqThCVqGKGrJmOZ-q14Gjl5StjpOkilCj3tYRD8dIzVJJPg1tGql5WVPTfJM2OnVvcg'
-        });
+const swReg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+const token = await messaging.getToken({
+  vapidKey: 'BJ5PR5eT1hyx47uNgz8EAqThCVqGKGrJmOZ-q14Gjl5StjpOkilCj3tYRD8dIzVJJPg1tGql5WVPTfJM2OnVvcg',
+  serviceWorkerRegistration: swReg
+});
         console.log('FCM Token:', token);
         localStorage.setItem('fcmToken', token);
         
