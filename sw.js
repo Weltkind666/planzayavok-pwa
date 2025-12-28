@@ -1,37 +1,45 @@
-const CACHE_NAME = 'planzayavok-v1';
+const CACHE_NAME = 'planzayavok-v2';
+const ASSETS = [
+  './',
+  './index.html',
+  './icon-192.png',
+  './icon-512.png'
+];
 
 self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(clients.claim());
+  event.waitUntil(
+    caches.keys().then(keys => 
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
+  if(event.request.url.includes('script.google.com')){
+    event.respondWith(fetch(event.request));
+    return;
+  }
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return new Response('Offline', { status: 503 });
-    })
+    caches.match(event.request).then(r => r || fetch(event.request))
   );
 });
 
 self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
-  const title = data.title || 'Новая заявка!';
-  const options = {
-    body: data.body || 'Поступила новая заявка',
-    icon: 'icon-192.png',
-    badge: 'icon-192.png',
-    vibrate: [200, 100, 200],
-    requireInteraction: true
-  };
-  event.waitUntil(self.registration.showNotification(title, options));
-});
-
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
   event.waitUntil(
-    clients.openWindow('https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec')
+    self.registration.showNotification(data.title || 'Новая заявка!', {
+      body: data.body || 'Поступила новая заявка',
+      icon: 'icon-192.png',
+      badge: 'icon-192.png',
+      vibrate: [200, 100, 200]
+    })
   );
 });
