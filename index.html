@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>Планировщик заявок</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4f46e5">
@@ -38,7 +39,7 @@
     🔔 Включить уведомления
   </button>
   
-  <iframe id="app" class="hidden" src="https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec" allow="notifications"></iframe>
+  <iframe id="app" class="hidden" src="https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec"></iframe>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
@@ -58,10 +59,11 @@
     
     // Service Worker
     if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('sw.js').then(reg=>{
+      navigator.serviceWorker.register('sw.js').then(function(reg){
         console.log('SW registered');
-        messaging.useServiceWorker(reg);
-      }).catch(e=>console.log('SW error',e));
+      }).catch(function(e){
+        console.log('SW error',e);
+      });
     }
     
     // Загрузка iframe
@@ -69,8 +71,8 @@
     const loader = document.getElementById('loader');
     const notifyBtn = document.getElementById('notifyBtn');
     
-    iframe.onload = () => {
-      setTimeout(() => {
+    iframe.onload = function() {
+      setTimeout(function() {
         loader.classList.add('hidden');
         iframe.classList.remove('hidden');
         checkNotificationPermission();
@@ -78,44 +80,85 @@
     };
     
     function checkNotificationPermission() {
-      if('Notification' in window && Notification.permission === 'default') {
-        notifyBtn.style.display = 'block';
+      if('Notification' in window) {
+        if(Notification.permission === 'default') {
+          notifyBtn.style.display = 'block';
+          notifyBtn.textContent = '🔔 Включить уведомления';
+        } else if(Notification.permission === 'denied') {
+          notifyBtn.style.display = 'block';
+          notifyBtn.textContent = '🔕 Уведомления заблокированы';
+          notifyBtn.style.background = '#ef4444';
+          notifyBtn.style.color = '#fff';
+        } else {
+          notifyBtn.style.display = 'block';
+          notifyBtn.textContent = '✅ Уведомления включены';
+          notifyBtn.style.background = '#10b981';
+          notifyBtn.style.color = '#fff';
+          getTokenAndSave();
+          setTimeout(function(){ notifyBtn.style.display = 'none'; }, 3000);
+        }
       }
     }
     
     async function requestPermission() {
       try {
         const permission = await Notification.requestPermission();
+        console.log('Permission:', permission);
         if(permission === 'granted') {
-          notifyBtn.style.display = 'none';
-          const token = await messaging.getToken({
-            vapidKey: 'BJ5PR5eT1hyx47uNgz8EAqThCVqGKGrJmOZ-q14Gjl5StjpOkilCj3tYRD8dIzVJJPg1tGql5WVPTfJM2OnVvcg'
-          });
-console.log('FCM Token:', token);
-localStorage.setItem('fcmToken', token);
-var savedEmail = localStorage.getItem('savedEmail') || '';
-console.log('Saving token for:', savedEmail);
-if(savedEmail && token) {
-  var saveUrl = 'https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec?action=savePushToken&token='+encodeURIComponent(token)+'&email='+encodeURIComponent(savedEmail);
-  fetch(saveUrl, {mode:'no-cors'}).then(function(){console.log('Token saved!')}).catch(function(e){console.log('Save error:',e)});
-}
-
-// Отправляем токен на сервер
-fetch('https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec?action=savePushToken&token='+encodeURIComponent(token)+'&email='+encodeURIComponent(localStorage.getItem('savedEmail')||''), {mode:'no-cors'});
-          
-          // Тестовое уведомление
-          new Notification('Уведомления включены!', {
-            body: 'Теперь вы будете получать оповещения о новых заявках',
-            icon: 'icon-192.png'
-          });
+          notifyBtn.textContent = '✅ Получаем токен...';
+          notifyBtn.style.background = '#10b981';
+          notifyBtn.style.color = '#fff';
+          await getTokenAndSave();
+          notifyBtn.textContent = '✅ Уведомления включены';
+          setTimeout(function(){ notifyBtn.style.display = 'none'; }, 3000);
+        } else {
+          notifyBtn.textContent = '🔕 Уведомления заблокированы';
+          notifyBtn.style.background = '#ef4444';
+          notifyBtn.style.color = '#fff';
         }
       } catch(err) {
         console.error('Permission error:', err);
+        notifyBtn.textContent = '❌ Ошибка';
+        notifyBtn.style.background = '#ef4444';
       }
     }
     
-    // Обработка входящих сообщений когда приложение открыто
-    messaging.onMessage((payload) => {
+    async function getTokenAndSave() {
+      try {
+        const token = await messaging.getToken({
+          vapidKey: 'BJ5PR5eT1hyx47uNgz8EAqThCVqGKGrJmOZ-q14Gjl5StjpOkilCj3tYRD8dIzVJJPg1tGql5WVPTfJM2OnVvcg'
+        });
+        console.log('FCM Token:', token);
+        localStorage.setItem('fcmToken', token);
+        
+        var savedEmail = localStorage.getItem('savedEmail') || '';
+        console.log('Saving token for email:', savedEmail);
+        
+        if(savedEmail && token) {
+          var saveUrl = 'https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec?action=savePushToken&token='+encodeURIComponent(token)+'&email='+encodeURIComponent(savedEmail);
+          console.log('Saving to:', saveUrl);
+          fetch(saveUrl, {mode:'no-cors'}).then(function(){
+            console.log('Token save request sent!');
+          }).catch(function(e){
+            console.log('Save error:', e);
+          });
+        } else {
+          console.log('No email found, token not saved to server');
+        }
+        
+        // Тестовое уведомление
+        new Notification('Уведомления включены!', {
+          body: 'Теперь вы будете получать оповещения о новых заявках',
+          icon: 'icon-192.png'
+        });
+        
+      } catch(err) {
+        console.error('Token error:', err);
+      }
+    }
+    
+    // Обработка входящих сообщений
+    messaging.onMessage(function(payload) {
       console.log('Message received:', payload);
       new Notification(payload.notification.title, {
         body: payload.notification.body,
