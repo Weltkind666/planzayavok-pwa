@@ -93,6 +93,12 @@
           });
 console.log('FCM Token:', token);
 localStorage.setItem('fcmToken', token);
+var savedEmail = localStorage.getItem('savedEmail') || '';
+console.log('Saving token for:', savedEmail);
+if(savedEmail && token) {
+  var saveUrl = 'https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec?action=savePushToken&token='+encodeURIComponent(token)+'&email='+encodeURIComponent(savedEmail);
+  fetch(saveUrl, {mode:'no-cors'}).then(function(){console.log('Token saved!')}).catch(function(e){console.log('Save error:',e)});
+}
 
 // Отправляем токен на сервер
 fetch('https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec?action=savePushToken&token='+encodeURIComponent(token)+'&email='+encodeURIComponent(localStorage.getItem('savedEmail')||''), {mode:'no-cors'});
