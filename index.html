@@ -71,12 +71,8 @@
         }
 
         @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .hidden {
@@ -103,40 +99,6 @@
 
         .notify-btn:hover {
             background: #f0f0f0;
-        }
-
-        .email-prompt {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-            z-index: 1002;
-            display: none;
-            text-align: center;
-        }
-
-        .email-prompt input {
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            width: 250px;
-            margin: 12px 0;
-        }
-
-        .email-prompt button {
-            padding: 12px 24px;
-            background: #4f46e5;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
         }
 
         .overlay {
@@ -201,9 +163,7 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .apk-btn:hover {
-            transform: scale(1.03);
-        }
+        .apk-btn:hover { transform: scale(1.03); }
 
         .thanks-btn {
             background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -220,9 +180,7 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .thanks-btn:hover {
-            transform: scale(1.03);
-        }
+        .thanks-btn:hover { transform: scale(1.03); }
 
         .thanks-modal {
             position: fixed;
@@ -240,52 +198,13 @@
             width: 90%;
         }
 
-        .thanks-modal h3 {
-            font-size: 20px;
-            margin-bottom: 12px;
-            color: #333;
-        }
-
-        .thanks-modal p {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 16px;
-            line-height: 1.5;
-        }
-
-        .thanks-modal .timer {
-            font-size: 32px;
-            font-weight: 700;
-            color: #f59e0b;
-            margin-bottom: 16px;
-        }
-
-        .thanks-modal .links {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        .thanks-modal .links a {
-            padding: 12px 20px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .thanks-modal .wa-link {
-            background: #25d366;
-            color: #fff;
-        }
-
-        .thanks-modal .tg-link {
-            background: #0088cc;
-            color: #fff;
-        }
+        .thanks-modal h3 { font-size: 20px; margin-bottom: 12px; color: #333; }
+        .thanks-modal p { font-size: 14px; color: #666; margin-bottom: 16px; line-height: 1.5; }
+        .thanks-modal .timer { font-size: 32px; font-weight: 700; color: #f59e0b; margin-bottom: 16px; }
+        .thanks-modal .links { display: flex; gap: 12px; justify-content: center; }
+        .thanks-modal .links a { padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+        .thanks-modal .wa-link { background: #25d366; color: #fff; }
+        .thanks-modal .tg-link { background: #0088cc; color: #fff; }
     </style>
 </head>
 <body>
@@ -298,14 +217,9 @@
         <div class="loader-text">Планировщик заявок</div>
         <div class="loader-sub">Загрузка...</div>
     </div>
-    <div class="overlay" id="overlay" onclick="closeEmailPrompt()"></div>
+    <div class="overlay" id="overlay" onclick="closeThanksModal()"></div>
     <div class="overlay" id="thanksOverlay" onclick="closeThanksModal()" style="display:none"></div>
-    <div class="email-prompt" id="emailPrompt">
-        <div style="font-weight:700;font-size:18px;margin-bottom:4px">📧 Email для уведомлений</div>
-        <div style="font-size:12px;color:#666;margin-bottom:8px">Укажите email из системы</div>
-        <input type="email" id="promptEmail" placeholder="email@example.com"><br>
-        <button onclick="submitEmail()">Сохранить</button>
-    </div>
+
     <div class="thanks-modal" id="thanksModal">
         <h3>🍺 Спасибо!</h3>
         <p>Если приложение оказалось полезным, можете поблагодарить разработчика — скинуть на пивко для мотивации!</p>
@@ -315,13 +229,18 @@
             <a class="tg-link" href="https://t.me/WeltkindVPN" target="_blank">✈️ Telegram</a>
         </div>
     </div>
+
+    <!-- Кнопка уведомлений — показывается только если разрешение ещё не дано -->
     <button class="notify-btn" id="notifyBtn" onclick="requestPermission()">🔔 Включить уведомления</button>
-    <button class="change-email-btn" id="changeEmailBtn" onclick="changeEmail()">✏️ Email</button>
+    <button class="change-email-btn" id="changeEmailBtn" style="display:none">✏️ Push: активен</button>
+
     <div class="bottom-btns">
         <button class="apk-btn" id="installBtn" style="display:none" onclick="installPWA()">➕ Установить приложение</button>
         <button class="thanks-btn" onclick="openThanksModal()">☕ Поблагодарить разработчика</button>
     </div>
+
     <iframe id="app" class="hidden" src="https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec"></iframe>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script>
@@ -336,30 +255,26 @@
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
+        // Регистрируем один SW для кэша + Firebase messaging
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(function(reg) {
-                console.log('SW registered');
-            }).catch(function(e) {
+            navigator.serviceWorker.register('sw.js').catch(function(e) {
                 console.log('SW error', e);
             });
         }
 
-        const iframe = document.getElementById('app');
-        const loader = document.getElementById('loader');
-        const notifyBtn = document.getElementById('notifyBtn');
-        const emailPrompt = document.getElementById('emailPrompt');
-        const overlay = document.getElementById('overlay');
+        const iframe       = document.getElementById('app');
+        const loader       = document.getElementById('loader');
+        const notifyBtn    = document.getElementById('notifyBtn');
         const changeEmailBtn = document.getElementById('changeEmailBtn');
-        const thanksModal = document.getElementById('thanksModal');
+        const thanksModal  = document.getElementById('thanksModal');
         const thanksOverlay = document.getElementById('thanksOverlay');
-        const thanksTimer = document.getElementById('thanksTimer');
+        const thanksTimer  = document.getElementById('thanksTimer');
+        const installBtn   = document.getElementById('installBtn');
 
-        // PWA install (Android/Chrome/Edge)
+        // ── PWA install ──────────────────────────────────────────
         let deferredInstallPrompt = null;
-        const installBtn = document.getElementById('installBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent automatic mini-infobar
             e.preventDefault();
             deferredInstallPrompt = e;
             if (installBtn) installBtn.style.display = 'flex';
@@ -368,22 +283,19 @@
         window.addEventListener('appinstalled', () => {
             deferredInstallPrompt = null;
             if (installBtn) installBtn.style.display = 'none';
-            console.log('PWA installed');
         });
 
         async function installPWA() {
             try {
                 if (!deferredInstallPrompt) return;
                 deferredInstallPrompt.prompt();
-                const choice = await deferredInstallPrompt.userChoice;
-                console.log('Install choice:', choice);
+                await deferredInstallPrompt.userChoice;
                 deferredInstallPrompt = null;
                 if (installBtn) installBtn.style.display = 'none';
-            } catch (e) {
-                console.log('Install error:', e);
-            }
+            } catch (e) { console.log('Install error:', e); }
         }
 
+        // ── Загрузка iframe ──────────────────────────────────────
         let timerInterval = null;
 
         iframe.onload = function() {
@@ -392,23 +304,18 @@
                 iframe.classList.remove('hidden');
                 checkNotificationPermission();
 
-                // Hide bottom buttons after 5 seconds (auto)
                 setTimeout(function() {
                     const bottomBtns = document.querySelector('.bottom-btns');
                     if (!bottomBtns) return;
-
-                    // If install button is visible, keep buttons on screen
-                    const _installBtn = document.getElementById('installBtn');
-                    if (_installBtn && window.getComputedStyle(_installBtn).display !== 'none') return;
-
+                    const _ib = document.getElementById('installBtn');
+                    if (_ib && window.getComputedStyle(_ib).display !== 'none') return;
                     bottomBtns.classList.add('fade-out');
-                    setTimeout(function() {
-                        bottomBtns.classList.add('hidden');
-                    }, 400); // чуть больше чем transition (0.35s)
+                    setTimeout(function() { bottomBtns.classList.add('hidden'); }, 400);
                 }, 5000);
             }, 500);
         };
 
+        // ── Благодарность ────────────────────────────────────────
         function openThanksModal() {
             thanksModal.style.display = 'block';
             thanksOverlay.style.display = 'block';
@@ -428,58 +335,39 @@
         function closeThanksModal() {
             thanksModal.style.display = 'none';
             thanksOverlay.style.display = 'none';
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
         }
 
+        // ── Состояние кнопки уведомлений ─────────────────────────
         function checkNotificationPermission() {
-            if ('Notification' in window) {
-                var savedEmail = localStorage.getItem('pushEmail') || '';
-                if (Notification.permission === 'default') {
-                    notifyBtn.style.display = 'block';
-                    notifyBtn.textContent = '🔔 Включить уведомления';
-                    notifyBtn.style.background = '#fff';
-                    notifyBtn.style.color = '#4f46e5';
-                    changeEmailBtn.style.display = 'none';
-                } else if (Notification.permission === 'denied') {
-                    notifyBtn.style.display = 'none';
-                    changeEmailBtn.style.display = 'none';
-                } else {
-                    notifyBtn.style.display = 'none';
-                    if (savedEmail) {
-                        changeEmailBtn.style.display = 'block';
-                    } else {
-                        notifyBtn.style.display = 'block';
-                        notifyBtn.textContent = '🔔 Настроить уведомления';
-                        notifyBtn.style.background = '#fff';
-                        notifyBtn.style.color = '#4f46e5';
-                        changeEmailBtn.style.display = 'none';
-                    }
+            if (!('Notification' in window)) return;
+            var savedEmail = localStorage.getItem('pushEmail') || '';
+            if (Notification.permission === 'default') {
+                notifyBtn.style.display = 'block';
+                notifyBtn.textContent = '🔔 Включить уведомления';
+                notifyBtn.style.background = '#fff';
+                notifyBtn.style.color = '#4f46e5';
+                changeEmailBtn.style.display = 'none';
+            } else if (Notification.permission === 'denied') {
+                notifyBtn.style.display = 'none';
+                changeEmailBtn.style.display = 'none';
+            } else {
+                // granted
+                notifyBtn.style.display = 'none';
+                changeEmailBtn.style.display = savedEmail ? 'block' : 'none';
+                // Если токена нет — обновляем тихо
+                if (!localStorage.getItem('fcmToken') && savedEmail) {
+                    getTokenAndSave();
                 }
             }
         }
 
-        function closeEmailPrompt() {
-            emailPrompt.style.display = 'none';
-            overlay.style.display = 'none';
-        }
-
-        function changeEmail() {
-            var currentEmail = localStorage.getItem('pushEmail') || '';
-            document.getElementById('promptEmail').value = currentEmail;
-            emailPrompt.style.display = 'block';
-            overlay.style.display = 'block';
-            document.getElementById('promptEmail').focus();
-        }
-
+        // ── Запрос разрешения (кнопка на GitHub Pages) ───────────
         async function requestPermission() {
             try {
                 const permission = await Notification.requestPermission();
-                console.log('Permission:', permission);
                 if (permission === 'granted') {
-                    notifyBtn.textContent = '✅ Получаем токен...';
+                    notifyBtn.textContent = '✅ Подключаем...';
                     notifyBtn.style.background = '#10b981';
                     notifyBtn.style.color = '#fff';
                     await getTokenAndSave();
@@ -487,9 +375,7 @@
                     notifyBtn.textContent = '🔕 Заблокировано';
                     notifyBtn.style.background = '#ef4444';
                     notifyBtn.style.color = '#fff';
-                    setTimeout(function() {
-                        notifyBtn.style.display = 'none';
-                    }, 3000);
+                    setTimeout(function() { notifyBtn.style.display = 'none'; }, 3000);
                 }
             } catch (err) {
                 console.error('Permission error:', err);
@@ -498,6 +384,7 @@
             }
         }
 
+        // ── Получение FCM-токена и сохранение ────────────────────
         async function getTokenAndSave() {
             try {
                 const swReg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
@@ -505,16 +392,14 @@
                     vapidKey: 'BJ5PR5eT1hyx47uNgz8EAqThCVqGKGrJmOZ-q14Gjl5StjpOkilCj3tYRD8dIzVJJPg1tGql5WVPTfJM2OnVvcg',
                     serviceWorkerRegistration: swReg
                 });
-
                 console.log('FCM Token:', token);
                 localStorage.setItem('fcmToken', token);
 
                 var email = localStorage.getItem('pushEmail') || '';
                 if (!email) {
+                    // Email ещё не знаем — ждём postMessage от iframe после логина
+                    console.log('Token ready, waiting for email from iframe...');
                     notifyBtn.style.display = 'none';
-                    emailPrompt.style.display = 'block';
-                    overlay.style.display = 'block';
-                    document.getElementById('promptEmail').focus();
                     return;
                 }
 
@@ -523,7 +408,7 @@
                 changeEmailBtn.style.display = 'block';
 
                 new Notification('Уведомления включены!', {
-                    body: 'Email: ' + email,
+                    body: 'Аккаунт: ' + email,
                     icon: 'icon-192.png'
                 });
             } catch (err) {
@@ -532,52 +417,58 @@
             }
         }
 
-        function submitEmail() {
-            var email = document.getElementById('promptEmail').value.trim();
-            if (!email) {
-                alert('Введите email');
-                return;
-            }
-
-            localStorage.setItem('pushEmail', email);
-            closeEmailPrompt();
-
-            var token = localStorage.getItem('fcmToken');
-            if (token) {
-                saveTokenToServer(token, email);
-                notifyBtn.style.display = 'none';
-                changeEmailBtn.style.display = 'block';
-
-                new Notification('Готово!', {
-                    body: 'Уведомления: ' + email,
-                    icon: 'icon-192.png'
-                });
-            } else {
-                getTokenAndSave();
-            }
-        }
-
+        // ── Сохранение токена на сервер ───────────────────────────
         function saveTokenToServer(token, email) {
-            console.log('Saving token for:', email);
-            var saveUrl = 'https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec?action=savePushToken&token=' +
-                encodeURIComponent(token) + '&email=' + encodeURIComponent(email);
-
+            console.log('Saving push token for:', email);
+            var saveUrl = 'https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec?action=savePushToken&token='
+                + encodeURIComponent(token) + '&email=' + encodeURIComponent(email);
             fetch(saveUrl, { mode: 'no-cors' })
-                .then(function() {
-                    console.log('Token saved!');
-                })
-                .catch(function(e) {
-                    console.log('Save error:', e);
-                });
+                .then(function() { console.log('Token saved!'); })
+                .catch(function(e) { console.log('Save error:', e); });
         }
 
+        // ── Входящие push (приложение открыто) ───────────────────
         messaging.onMessage(function(payload) {
-            console.log('Message received:', payload);
+            console.log('Foreground message:', payload);
             if (payload && payload.notification) {
                 new Notification(payload.notification.title, {
                     body: payload.notification.body,
                     icon: 'icon-192.png'
                 });
+            }
+        });
+
+        // ── ГЛАВНОЕ ИСПРАВЛЕНИЕ: слушаем postMessage от GAS-iframe ──
+        window.addEventListener('message', function(e) {
+            if (!e.data) return;
+
+            // После логина GAS присылает email пользователя
+            if (e.data.type === 'userEmail' && e.data.email) {
+                var email = e.data.email;
+                console.log('Got email from GAS iframe:', email);
+                localStorage.setItem('pushEmail', email);
+
+                var token = localStorage.getItem('fcmToken');
+                if (token) {
+                    // Токен уже есть — сразу привязываем к этому email
+                    saveTokenToServer(token, email);
+                    notifyBtn.style.display = 'none';
+                    changeEmailBtn.style.display = 'block';
+                } else if (Notification.permission === 'granted') {
+                    // Разрешение есть, токена нет — получаем
+                    getTokenAndSave();
+                }
+                // Если permission === 'default' — кнопка уже видна, пользователь нажмёт сам
+            }
+
+            // Пользователь нажал 🔔 внутри GAS-приложения
+            if (e.data.type === 'requestPushPermission') {
+                if (e.data.email) localStorage.setItem('pushEmail', e.data.email);
+                if (Notification.permission === 'granted') {
+                    getTokenAndSave();
+                } else {
+                    requestPermission();
+                }
             }
         });
 
