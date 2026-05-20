@@ -544,6 +544,7 @@
         }, 15000);
 
         function retryLoad() {
+            clearTimeout(offlineTimer);
             const offlineBlock = document.getElementById('loaderOffline');
             if (offlineBlock) offlineBlock.style.display = 'none';
             document.querySelector('.loader-dots').style.display = 'flex';
@@ -583,7 +584,7 @@
         function openThanksModal() {
             thanksModal.style.display = 'block';
             thanksOverlay.style.display = 'block';
-            let seconds = 10;
+            let seconds = 5;
             thanksTimer.textContent = seconds;
             timerInterval = setInterval(function() {
                 seconds--;
