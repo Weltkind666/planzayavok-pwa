@@ -1,15 +1,28 @@
 {
   "name": "Планировщик заявок",
   "short_name": "Заявки",
+  "description": "Система управления и планирования заявок",
+  "lang": "ru",
+  "dir": "ltr",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#4f46e5",
   "theme_color": "#4f46e5",
   "orientation": "portrait",
+  "categories": ["productivity", "business"],
+  "prefer_related_applications": false,
   "icons": [
     {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
     {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
     {"src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {
+      "name": "Открыть заявки",
+      "short_name": "Заявки",
+      "url": "./index.html",
+      "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]
+    }
   ]
 }

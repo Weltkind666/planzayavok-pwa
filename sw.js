@@ -1,64 +1,63 @@
-importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
-
-firebase.initializeApp({
-  apiKey: "AIzaSyD2HkY76nLBhE7GuCwXi1j6qzKyYPSmypg",
-  authDomain: "planzayavok.firebaseapp.com",
-  projectId: "planzayavok",
-  storageBucket: "planzayavok.firebasestorage.app",
-  messagingSenderId: "655180080768",
-  appId: "1:655180080768:web:449d8189bf747d34b46865"
-});
-
-const messaging = firebase.messaging();
-
-// Обработка фоновых сообщений
-messaging.onBackgroundMessage((payload) => {
-  console.log('Background message:', payload);
-  
-  const title = payload.notification?.title || 'Новая заявка!';
-  const options = {
-    body: payload.notification?.body || 'Поступила новая заявка',
-    icon: 'icon-192.png',
-    badge: 'icon-192.png',
-    vibrate: [200, 100, 200],
-    requireInteraction: true,
-    data: payload.data
-  };
-  
-  self.registration.showNotification(title, options);
-});
-
-// Клик по уведомлению
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow('https://weltkind666.github.io/planzayavok-pwa/')
-  );
-});
-
-// Кэширование
-const CACHE_NAME = 'planzayavok-v3';
-const ASSETS = ['./', './index.html', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'planzayavok-v4';
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-512-maskable.png'
+];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    )
   );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  if(event.request.url.includes('script.google.com')) {
-    event.respondWith(fetch(event.request));
+  const url = event.request.url;
+
+  // Внешние запросы — только через сеть (GAS, Firebase, CDN)
+  if (
+    url.includes('script.google.com') ||
+    url.includes('googleapis.com') ||
+    url.includes('gstatic.com') ||
+    url.includes('firebaseapp.com') ||
+    url.includes('firebasejs') ||
+    url.includes('fonts.googleapis') ||
+    url.includes('cdnjs.cloudflare.com')
+  ) {
+    event.respondWith(fetch(event.request).catch(() => new Response('', { status: 503 })));
     return;
   }
+
+  // Локальные ресурсы — сначала кэш, потом сеть
   event.respondWith(
     caches.match(event.request).then(r => r || fetch(event.request))
+  );
+});
+
+// Клик по push-уведомлению — фокус на открытое окно или открыть новое
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url.includes('planzayavok-pwa') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      return clients.openWindow('https://weltkind666.github.io/planzayavok-pwa/');
+    })
   );
 });
