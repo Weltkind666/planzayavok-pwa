@@ -261,6 +261,28 @@
             background: rgba(0, 0, 0, 0.5);
         }
 
+        .clear-cache-btn {
+            position: fixed;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.25);
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 1000;
+            display: none;
+            opacity: 0.5;
+            font-family: system-ui, sans-serif;
+        }
+
+        .clear-cache-btn:hover {
+            opacity: 1;
+            background: rgba(220, 38, 38, 0.7);
+        }
+
         .bottom-btns {
             position: fixed;
             bottom: 12px;
@@ -427,6 +449,7 @@
     </div>
     <button class="notify-btn" id="notifyBtn" onclick="requestPermission()">🔔 Включить уведомления</button>
     <button class="change-email-btn" id="changeEmailBtn" onclick="changeEmail()">✏️ Email</button>
+    <button class="clear-cache-btn" id="clearCacheBtn" onclick="clearAppCache()" title="Очистить кэш и обновить">🗑️ Очистить кэш</button>
     <div class="bottom-btns">
         <button class="apk-btn" id="installBtn" style="display:none" onclick="installPWA()">➕ Установить приложение</button>
     </div>
@@ -540,6 +563,7 @@
                 iframe.classList.remove('hidden');
                 document.getElementById('aiPanel').style.display = 'flex';
                 document.getElementById('thanksBtn').style.display = 'flex';
+                document.getElementById('clearCacheBtn').style.display = 'block';
                 checkNotificationPermission();
 
                 // Скрываем кнопки через 6 сек, но только если нет кнопки установки
@@ -768,6 +792,39 @@
     </script>
 
     <script>
+        async function clearAppCache() {
+            var btn = document.getElementById('clearCacheBtn');
+            btn.textContent = '⏳ Очистка...';
+            btn.style.opacity = '1';
+
+            // Сохраняем логин и токен уведомлений
+            var savedEmail = localStorage.getItem('pushEmail');
+            var savedToken = localStorage.getItem('fcmToken');
+
+            // Очищаем все SW-кэши
+            if ('caches' in window) {
+                var keys = await caches.keys();
+                await Promise.all(keys.map(function(k) { return caches.delete(k); }));
+            }
+
+            // Отписываем старый SW чтобы он перегрузился
+            if ('serviceWorker' in navigator) {
+                var regs = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(regs.map(function(r) { return r.unregister(); }));
+            }
+
+            // Очищаем sessionStorage и localStorage
+            sessionStorage.clear();
+            localStorage.clear();
+
+            // Возвращаем сохранённое
+            if (savedEmail) localStorage.setItem('pushEmail', savedEmail);
+            if (savedToken) localStorage.setItem('fcmToken', savedToken);
+
+            // Перезагрузка без кэша
+            window.location.reload(true);
+        }
+
         function openAi(url) {
             var w = Math.min(480, screen.width);
             var h = Math.min(800, screen.height);
