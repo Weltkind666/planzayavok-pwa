@@ -483,6 +483,17 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script>
+        function vibe(ms) { try { navigator.vibrate && navigator.vibrate(ms || 12); } catch(e){} }
+
+        function updateAppBadge(count) {
+            try {
+                if ('setAppBadge' in navigator) {
+                    count > 0 ? navigator.setAppBadge(count) : navigator.clearAppBadge();
+                }
+            } catch(e) {}
+        }
+    </script>
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyD2HkY76nLBhE7GuCwXi1j6qzKyYPSmypg",
             authDomain: "planzayavok.firebaseapp.com",
@@ -530,6 +541,7 @@
         });
 
         async function installPWA() {
+            vibe();
             try {
                 if (!deferredInstallPrompt) return;
                 deferredInstallPrompt.prompt();
@@ -554,6 +566,7 @@
         }, 15000);
 
         function retryLoad() {
+            vibe();
             clearTimeout(offlineTimer);
             const offlineBlock = document.getElementById('loaderOffline');
             if (offlineBlock) offlineBlock.style.display = 'none';
@@ -592,6 +605,7 @@
         };
 
         function openThanksModal() {
+            vibe();
             thanksModal.style.display = 'block';
             thanksOverlay.style.display = 'block';
             let seconds = 5;
@@ -648,6 +662,7 @@
         }
 
         function changeEmail() {
+            vibe();
             var currentEmail = localStorage.getItem('pushEmail') || '';
             document.getElementById('promptEmail').value = currentEmail;
             emailPrompt.style.display = 'block';
@@ -656,6 +671,7 @@
         }
 
         async function requestPermission() {
+            vibe();
             try {
                 const permission = await Notification.requestPermission();
                 console.log('Permission:', permission);
@@ -714,6 +730,7 @@
         }
 
         function submitEmail() {
+            vibe();
             var email = document.getElementById('promptEmail').value.trim();
             if (!email) {
                 alert('Введите email');
@@ -798,12 +815,18 @@
                     requestPermission();
                 }
             }
+
+            // Бейдж: количество просроченных заявок от GAS
+            if (e.data.type === 'badgeCount') {
+                updateAppBadge(e.data.count || 0);
+            }
         });
 
     </script>
 
     <script>
         async function clearAppCache() {
+            vibe(20);
             var btn = document.getElementById('clearCacheBtn');
             btn.textContent = '⏳ Очистка...';
             btn.style.opacity = '1';
@@ -837,6 +860,7 @@
         }
 
         function openAi(url) {
+            vibe();
             var w = Math.min(480, screen.width);
             var h = Math.min(800, screen.height);
             var left = Math.round((screen.width - w) / 2);

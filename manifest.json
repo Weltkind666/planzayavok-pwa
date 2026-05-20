@@ -23,6 +23,12 @@
       "short_name": "Заявки",
       "url": "./index.html",
       "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]
+    },
+    {
+      "name": "На сегодня",
+      "short_name": "Сегодня",
+      "url": "./index.html?filter=today",
+      "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]
     }
   ]
 }
