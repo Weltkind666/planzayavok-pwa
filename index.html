@@ -127,6 +127,57 @@
             background: rgba(255, 255, 255, 0.35);
         }
 
+        .ai-panel {
+            position: fixed;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ai-panel a {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            transition: transform 0.18s, box-shadow 0.18s;
+            font-family: system-ui, sans-serif;
+            letter-spacing: -0.2px;
+        }
+
+        .ai-panel a:hover {
+            transform: scale(1.12);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .ai-panel a:active {
+            transform: scale(0.96);
+        }
+
+        .ai-panel .ai-claude {
+            background: linear-gradient(135deg, #cc785c, #e8956d);
+        }
+
+        .ai-panel .ai-gpt {
+            background: linear-gradient(135deg, #10a37f, #15c39a);
+        }
+
+        .ai-panel .ai-banana {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+
         .hidden {
             display: none !important;
         }
@@ -380,6 +431,21 @@
         <button class="thanks-btn" onclick="openThanksModal()">☕ Поблагодарить разработчика</button>
     </div>
     <iframe id="app" class="hidden" src="https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec"></iframe>
+
+    <div class="ai-panel" id="aiPanel">
+        <a class="ai-claude" href="https://claude.ai" target="_blank" rel="noopener noreferrer" title="Claude AI">
+            <span style="font-size:20px;line-height:1">✦</span>
+            <span>Claude</span>
+        </a>
+        <a class="ai-gpt" href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" title="ChatGPT">
+            <span style="font-size:18px;line-height:1">⬡</span>
+            <span>ChatGPT</span>
+        </a>
+        <a class="ai-banana" href="https://nanobanana.io/ru" target="_blank" rel="noopener noreferrer" title="Banana">
+            <span style="font-size:20px;line-height:1">🍌</span>
+            <span>Banana</span>
+        </a>
+    </div>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
     <script>
@@ -471,6 +537,7 @@
             setTimeout(function() {
                 loader.classList.add('hidden');
                 iframe.classList.remove('hidden');
+                document.getElementById('aiPanel').style.display = 'flex';
                 checkNotificationPermission();
 
                 // Скрываем кнопки через 6 сек, но только если нет кнопки установки
