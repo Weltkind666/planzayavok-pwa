@@ -171,101 +171,6 @@
         .ai-panel .ai-gpt     { background: linear-gradient(135deg, #10a37f, #15c39a); }
         .ai-panel .ai-banana  { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
 
-        /* ── Внутреннее окно AI ── */
-        .ai-window {
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-            background: #fff;
-        }
-
-        .ai-window.open {
-            display: flex;
-            animation: slideUp 0.25s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to   { transform: translateY(0); }
-        }
-
-        .ai-window-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            background: #1e293b;
-            color: #fff;
-            flex-shrink: 0;
-        }
-
-        .ai-window-title {
-            flex: 1;
-            font-size: 14px;
-            font-weight: 600;
-            font-family: system-ui, sans-serif;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            opacity: 0.9;
-        }
-
-        .ai-window-btn {
-            background: rgba(255,255,255,0.15);
-            border: none;
-            color: #fff;
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: background 0.15s;
-        }
-
-        .ai-window-btn:hover { background: rgba(255,255,255,0.25); }
-
-        .ai-window iframe {
-            flex: 1;
-            width: 100%;
-            border: none;
-        }
-
-        .ai-blocked {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            padding: 32px;
-            text-align: center;
-            font-family: system-ui, sans-serif;
-            color: #334155;
-        }
-
-        .ai-blocked-icon { font-size: 56px; }
-        .ai-blocked h3   { font-size: 18px; font-weight: 700; margin: 0; }
-        .ai-blocked p    { font-size: 14px; color: #64748b; line-height: 1.6; margin: 0; }
-
-        .ai-open-btn {
-            padding: 13px 28px;
-            background: #4f46e5;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: system-ui, sans-serif;
-            text-decoration: none;
-            display: inline-block;
-        }
 
         .hidden {
             display: none !important;
@@ -394,22 +299,29 @@
         }
 
         .thanks-btn {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 1000;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(245, 158, 11, 0.55);
             color: #fff;
             border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 20px;
             cursor: pointer;
-            display: flex;
+            display: none;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            transition: background 0.2s, transform 0.2s;
+            backdrop-filter: blur(4px);
         }
 
         .thanks-btn:hover {
-            transform: scale(1.03);
+            background: rgba(245, 158, 11, 0.95);
+            transform: scale(1.1);
         }
 
         .thanks-modal {
@@ -517,39 +429,23 @@
     <button class="change-email-btn" id="changeEmailBtn" onclick="changeEmail()">✏️ Email</button>
     <div class="bottom-btns">
         <button class="apk-btn" id="installBtn" style="display:none" onclick="installPWA()">➕ Установить приложение</button>
-        <button class="thanks-btn" onclick="openThanksModal()">☕ Поблагодарить разработчика</button>
     </div>
+    <button class="thanks-btn" id="thanksBtn" onclick="openThanksModal()" title="Поблагодарить разработчика">☕</button>
     <iframe id="app" class="hidden" src="https://script.google.com/macros/s/AKfycbziJi6zBrH0meVhi27JPdFquQYGhjDK2iX0EIjKrRplhW8E9CQZAkA1ZQpdiNqVsGI1/exec"></iframe>
 
     <div class="ai-panel" id="aiPanel">
-        <button class="ai-claude" onclick="openAiWindow('https://claude.ai','✦ Claude')" title="Claude AI">
+        <button class="ai-claude" onclick="openAi('https://claude.ai')" title="Claude AI">
             <span style="font-size:20px;line-height:1">✦</span>
             <span>Claude</span>
         </button>
-        <button class="ai-gpt" onclick="openAiWindow('https://chat.openai.com','⬡ ChatGPT')" title="ChatGPT">
+        <button class="ai-gpt" onclick="openAi('https://chat.openai.com')" title="ChatGPT">
             <span style="font-size:18px;line-height:1">⬡</span>
             <span>ChatGPT</span>
         </button>
-        <button class="ai-banana" onclick="openAiWindow('https://nanobanana.io/ru','🍌 Banana')" title="Banana">
+        <button class="ai-banana" onclick="openAi('https://nanobanana.io/ru')" title="Banana">
             <span style="font-size:20px;line-height:1">🍌</span>
             <span>Banana</span>
         </button>
-    </div>
-
-    <!-- Внутреннее окно AI -->
-    <div class="ai-window" id="aiWindow">
-        <div class="ai-window-bar">
-            <button class="ai-window-btn" onclick="closeAiWindow()" title="Закрыть">✕</button>
-            <span class="ai-window-title" id="aiWindowTitle"></span>
-            <a class="ai-window-btn" id="aiWindowExternal" href="#" target="_blank" rel="noopener noreferrer" title="Открыть в браузере" style="text-decoration:none">↗</a>
-        </div>
-        <iframe id="aiWindowFrame" src="about:blank" allow="fullscreen"></iframe>
-        <div class="ai-blocked" id="aiBlocked">
-            <div class="ai-blocked-icon" id="aiBlockedIcon"></div>
-            <h3 id="aiBlockedName"></h3>
-            <p>Этот сервис запрещает встраивание.<br>Откройте его в браузере — там сохранена ваша сессия.</p>
-            <a class="ai-open-btn" id="aiOpenBrowserBtn" href="#" target="_blank" rel="noopener noreferrer">Открыть в браузере</a>
-        </div>
     </div>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
@@ -643,6 +539,7 @@
                 loader.classList.add('hidden');
                 iframe.classList.remove('hidden');
                 document.getElementById('aiPanel').style.display = 'flex';
+                document.getElementById('thanksBtn').style.display = 'flex';
                 checkNotificationPermission();
 
                 // Скрываем кнопки через 6 сек, но только если нет кнопки установки
@@ -871,75 +768,16 @@
     </script>
 
     <script>
-        var aiCurrentUrl = '';
-        var aiBlockTimer = null;
-
-        function openAiWindow(url, title) {
-            aiCurrentUrl = url;
-            var win = document.getElementById('aiWindow');
-            var frame = document.getElementById('aiWindowFrame');
-            var titleEl = document.getElementById('aiWindowTitle');
-            var extLink = document.getElementById('aiWindowExternal');
-            var blocked = document.getElementById('aiBlocked');
-            var blockedIcon = document.getElementById('aiBlockedIcon');
-            var blockedName = document.getElementById('aiBlockedName');
-            var openBtn = document.getElementById('aiOpenBrowserBtn');
-
-            // Сброс
-            frame.style.display = 'block';
-            blocked.style.display = 'none';
-            titleEl.textContent = title;
-            extLink.href = url;
-            openBtn.href = url;
-
-            // Иконка и имя для экрана блокировки
-            var parts = title.split(' ');
-            blockedIcon.textContent = parts[0];
-            blockedName.textContent = parts.slice(1).join(' ');
-
-            // Загружаем URL в iframe
-            frame.src = url;
-
-            // Если iframe не загрузился за 4 сек — скорее всего заблокирован
-            clearTimeout(aiBlockTimer);
-            aiBlockTimer = setTimeout(function() {
-                if (frame.style.display !== 'none') {
-                    frame.style.display = 'none';
-                    blocked.style.display = 'flex';
-                }
-            }, 4000);
-
-            // Если загрузился успешно — снимаем таймер
-            frame.onload = function() {
-                clearTimeout(aiBlockTimer);
-                // Проверяем что реально загрузился (не about:blank)
-                if (frame.src && frame.src !== 'about:blank') {
-                    try {
-                        // Если можем прочитать contentDocument — не заблокирован
-                        var doc = frame.contentDocument || frame.contentWindow.document;
-                        if (!doc || doc.body === null) throw new Error('blocked');
-                        frame.style.display = 'block';
-                        blocked.style.display = 'none';
-                    } catch(e) {
-                        // Cross-origin — значит загрузился нормально (не заблокирован)
-                        frame.style.display = 'block';
-                        blocked.style.display = 'none';
-                    }
-                }
-            };
-
-            win.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeAiWindow() {
-            var win = document.getElementById('aiWindow');
-            var frame = document.getElementById('aiWindowFrame');
-            clearTimeout(aiBlockTimer);
-            win.classList.remove('open');
-            document.body.style.overflow = '';
-            // Чуть позже очищаем src чтобы остановить фоновый процесс
-            setTimeout(function() { frame.src = 'about:blank'; }, 300);
+        function openAi(url) {
+            var w = Math.min(480, screen.width);
+            var h = Math.min(800, screen.height);
+            var left = Math.round((screen.width - w) / 2);
+            var top  = Math.round((screen.height - h) / 2);
+            window.open(url, '_blank',
+                'width=' + w + ',height=' + h +
+                ',left=' + left + ',top=' + top +
+                ',toolbar=no,menubar=no,location=yes,scrollbars=yes,resizable=yes'
+            );
         }
     </script>
 </body>
