@@ -1,34 +1,59 @@
 {
-  "name": "Планировщик заявок",
-  "short_name": "Заявки",
-  "description": "Система управления и планирования заявок",
+  "name": "Weltkind — Личный кабинет",
+  "short_name": "Weltkind",
+  "description": "Подписка, оплата, уведомления и поддержка Weltkind",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "id": "https://weltkind666.github.io/777Weltkind777/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#F4F7FB",
+  "theme_color": "#F4F7FB",
+  "orientation": "any",
   "lang": "ru",
   "dir": "ltr",
-  "start_url": "./index.html",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#4f46e5",
-  "theme_color": "#4f46e5",
-  "orientation": "portrait",
-  "categories": ["productivity", "business"],
+  "categories": ["utilities", "finance"],
   "prefer_related_applications": false,
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
-    {"src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
     {
-      "name": "Открыть заявки",
-      "short_name": "Заявки",
-      "url": "./index.html",
-      "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]
+      "name": "Продлить подписку",
+      "short_name": "Продлить",
+      "description": "Выбрать тариф и оплатить",
+      "url": "./?source=pwa#renew",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "На сегодня",
-      "short_name": "Сегодня",
-      "url": "./index.html?filter=today",
-      "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"}]
+      "name": "Поддержка",
+      "short_name": "Чат",
+      "description": "Написать в поддержку",
+      "url": "./?source=pwa#support",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
